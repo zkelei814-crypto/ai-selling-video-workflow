@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "storyboard.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["project_id", "aspect_ratio", "duration_seconds", "product_identity", "shots"],
+  "properties": {
+    "project_id": {"type": "string"},
+    "aspect_ratio": {"const": "9:16"},
+    "duration_seconds": {"type": "integer", "minimum": 15, "maximum": 30},
+    "product_identity": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "shots": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "start", "end", "camera", "action", "voiceover", "caption", "caption_placement"],
+        "properties": {
+          "id": {"type": "string"},
+          "start": {"type": "number"},
+          "end": {"type": "number"},
+          "camera": {"type": "string"},
+          "action": {"type": "string"},
+          "voiceover": {"type": "string"},
+          "caption": {"type": "string"},
+          "caption_placement": {"const": "safe-center"}
+        }
+      }
+    }
+  }
+}

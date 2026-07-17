@@ -1,0 +1,4 @@
+interface:
+  display_name: "TikTok Selling Video Workflow"
+  short_description: "Build and quality-check US TikTok Shop UGC videos"
+  default_prompt: "Use $tiktok-script-analyzer-skill to turn my verified product facts into a production-ready 15-second UGC video package."

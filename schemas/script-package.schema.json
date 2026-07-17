@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "script-package.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["project_id", "selected_variant_id", "variants"],
+  "properties": {
+    "project_id": {"type": "string"},
+    "selected_variant_id": {"type": "string"},
+    "variants": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "angle", "score", "score_breakdown", "word_count", "fact_ids_used", "timeline"],
+        "properties": {
+          "id": {"type": "string"},
+          "angle": {"enum": ["discovery", "problem-first", "demonstration-first"]},
+          "score": {"type": "integer", "minimum": 0, "maximum": 100},
+          "score_breakdown": {
+            "type": "object",
+            "additionalProperties": {"type": "integer", "minimum": 0, "maximum": 20}
+          },
+          "word_count": {"type": "integer", "minimum": 1},
+          "fact_ids_used": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "timeline": {
+            "type": "array",
+            "minItems": 5,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["start", "end", "purpose", "voiceover", "caption", "visual"],
+              "properties": {
+                "start": {"type": "number", "minimum": 0},
+                "end": {"type": "number", "exclusiveMinimum": 0},
+                "purpose": {"enum": ["hook", "context", "proof", "payoff", "cta"]},
+                "voiceover": {"type": "string"},
+                "caption": {"type": "string"},
+                "visual": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

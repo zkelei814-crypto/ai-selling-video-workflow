@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "project.schema.json",
+  "title": "TikTok selling video project",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["project_id", "market", "platform", "duration_seconds", "product", "creative"],
+  "properties": {
+    "project_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,62}$"},
+    "market": {"type": "string", "minLength": 2},
+    "platform": {"type": "string", "minLength": 2},
+    "duration_seconds": {"type": "integer", "minimum": 15, "maximum": 30},
+    "provider": {"enum": ["prompt-only", "mock"]},
+    "product": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "identity", "facts"],
+      "properties": {
+        "name": {"type": "string", "minLength": 2},
+        "identity": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 2}},
+        "facts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "text", "source"],
+            "properties": {
+              "id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+              "text": {"type": "string", "minLength": 2},
+              "source": {"enum": ["visible", "user_supplied", "documented", "unverified"]},
+              "evidence": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "creative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["audience", "problem", "primary_benefit", "proof_shot", "setting"],
+      "properties": {
+        "audience": {"type": "string", "minLength": 2},
+        "problem": {"type": "string", "minLength": 2},
+        "primary_benefit": {"type": "string", "minLength": 2},
+        "proof_shot": {"type": "string", "minLength": 2},
+        "setting": {"type": "string", "minLength": 2}
+      }
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type", "description"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+          "type": {"enum": ["image", "video", "audio", "document"]},
+          "description": {"type": "string", "minLength": 2}
+        }
+      }
+    }
+  }
+}

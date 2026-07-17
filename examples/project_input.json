@@ -1,0 +1,48 @@
+{
+  "project_id": "aztec-bag-demo",
+  "market": "US",
+  "platform": "TikTok Shop",
+  "duration_seconds": 15,
+  "provider": "prompt-only",
+  "product": {
+    "name": "Aztec boho sling bag",
+    "identity": [
+      "tan woven sling bag with a geometric Aztec pattern",
+      "single adjustable dark strap",
+      "front zipper pocket"
+    ],
+    "facts": [
+      {
+        "id": "adjustable-strap",
+        "text": "The shoulder strap is adjustable.",
+        "source": "visible",
+        "evidence": "Product image shows the strap adjuster."
+      },
+      {
+        "id": "front-pocket",
+        "text": "The bag has a front zipper pocket.",
+        "source": "visible",
+        "evidence": "Product image shows the front zipper."
+      },
+      {
+        "id": "large-capacity",
+        "text": "The bag has a very large capacity.",
+        "source": "unverified"
+      }
+    ]
+  },
+  "creative": {
+    "audience": "American women who want a hands-free bag for everyday errands",
+    "problem": "small essentials get lost in a larger tote",
+    "primary_benefit": "quick access to everyday essentials",
+    "proof_shot": "place a phone and keys in the bag, zip it, then show the front pocket",
+    "setting": "a lived-in entryway in natural daylight"
+  },
+  "assets": [
+    {
+      "id": "product-front",
+      "type": "image",
+      "description": "Front product reference image"
+    }
+  ]
+}
