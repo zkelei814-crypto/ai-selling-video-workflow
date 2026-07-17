@@ -25,6 +25,19 @@ RISK_PATTERNS = {
     "superlative": r"\b(?:best ever|number one|#1|miracle)\b",
     "fake_urgency": r"\b(?:limited time|only \d+ left|act now|selling out)\b",
 }
+HAZARDOUS_TOOL_PATTERN = re.compile(
+    r"\b(?:chain\s*saw|chainsaw|circular\s+saw|reciprocating\s+saw|saw|drill|grinder|"
+    r"blade|knife|torch|heat\s+gun|nail\s+gun|mower|trimmer)\b",
+    re.IGNORECASE,
+)
+LEGACY_CATEGORY_PHRASES = (
+    "small essentials",
+    "big tote",
+    "larger tote",
+    "for errands",
+    "errand bag",
+    "phone and keys",
+)
 
 
 class WorkflowError(ValueError):
@@ -168,6 +181,11 @@ def short_product_name(name: str) -> str:
     return " ".join(words[-3:]).lower()
 
 
+def is_hazardous_tool(project: dict[str, Any]) -> bool:
+    """Return whether the product name calls for power-tool safety direction."""
+    return bool(HAZARDOUS_TOOL_PATTERN.search(project["product"]["name"]))
+
+
 def segment(start: float, end: float, purpose: str, voiceover: str, caption: str, visual: str) -> dict[str, Any]:
     return {
         "start": start,
@@ -208,49 +226,72 @@ def build_script_package(project: dict[str, Any], ledger: dict[str, Any]) -> dic
     second = usable[1] if len(usable) > 1 else None
     first_fact = sentence(first["text"])
     second_fact = sentence(second["text"]) if second else "That keeps the setup simple."
-    first_continuation = first_fact[0].lower() + first_fact[1:]
     used_ids = [first["id"]] + ([second["id"]] if second else [])
     proof_visual = creative["proof_shot"]
+    hazardous = is_hazardous_tool(project)
+
+    if hazardous:
+        hook_visual = (
+            "Show the product immediately, powered off and resting flat on a stable workbench; "
+            "keep it away from the creator's face and keep hands away from the chain or blade."
+        )
+        context_voice = "Eye protection on, gloves on, workpiece secured."
+        context_visual = (
+            "Put on eye protection and work gloves, then show the workpiece clamped securely "
+            "before touching the powered-off product."
+        )
+        payoff_visual = "Power the product off and set it flat before showing the verified detail."
+        cta_visual = (
+            "With the product powered off and the trigger disengaged, show the product and package "
+            "resting flat on the workbench; no urgency graphics."
+        )
+    else:
+        hook_visual = "Handheld phone close-up; show the product immediately at a natural, safe distance."
+        context_voice = sentence(f"The issue is: {creative['problem']}")
+        context_visual = f"Show the everyday context in {creative['setting']}."
+        payoff_visual = "Close-up of the verified product detail."
+        cta_visual = "Hold the product naturally; no urgency graphics."
 
     raw_variants = [
         (
             "variant-a",
             "discovery",
             [
-                segment(0, 2, "hook", f"Okay, this {product} surprised me.", "This surprised me", "Handheld selfie; hold the product beside the face immediately."),
-                segment(2, 5, "context", f"I hate digging for small essentials.", "No more digging", f"Point to the product in {creative['setting']}."),
+                segment(0, 2, "hook", f"Okay, this {product} caught my attention.", "This caught my attention", hook_visual),
+                segment(2, 5, "context", context_voice, "Start with the real task", context_visual),
                 segment(5, 10, "proof", f"See? {first_fact}", "Look at this detail", proof_visual),
-                segment(10, 13, "payoff", second_fact, "Easy everyday access", "Close-up of the verified product detail."),
-                segment(13, 15, "cta", "Tap the cart to check it out.", "Check it out", "Hold the product naturally; no urgency graphics."),
+                segment(10, 13, "payoff", "That's the detail I wanted to verify.", "A verified detail", payoff_visual),
+                segment(13, 15, "cta", "Tap the cart if you want to see it.", "See the product", cta_visual),
             ],
         ),
         (
             "variant-b",
             "problem-first",
             [
-                segment(0, 2, "hook", "Still losing small essentials in a big tote?", "Losing small essentials?", "Show the product and a larger tote in one handheld frame."),
-                segment(2, 5, "context", f"I switched to this {product} for errands.", "My errand bag", f"Put the product on in {creative['setting']}."),
+                segment(0, 2, "hook", "Quick task, but the usual setup feels excessive?", "Too much setup?", hook_visual),
+                segment(2, 5, "context", context_voice if hazardous else f"So I looked at this {product} instead.", "A more focused option", context_visual),
                 segment(5, 10, "proof", f"Look. {first_fact}", "Verified detail", proof_visual),
-                segment(10, 13, "payoff", second_fact, "Simple and accessible", "Close-up of the second verified detail."),
-                segment(13, 15, "cta", "Tap the cart if you want to see it.", "See the product", "End on a readable product close-up."),
+                segment(10, 13, "payoff", second_fact, "One more visible detail", payoff_visual),
+                segment(13, 15, "cta", "Tap the cart if you want to see it.", "See the product", cta_visual),
             ],
         ),
         (
             "variant-c",
             "demonstration-first",
             [
-                segment(0, 2, "hook", f"Here's this {product} in real use.", "Here it is in use", "Start on the product already in hand."),
-                segment(2, 5, "context", "Phone and keys go in first.", "Phone + keys", "Place only the demonstrated items into the product."),
-                segment(5, 10, "proof", f"And {first_continuation}", "Close-up proof", proof_visual),
-                segment(10, 13, "payoff", second_fact, "One more detail", "Show the second verified detail without a beauty-ad setup."),
-                segment(13, 15, "cta", "Tap the cart to check it out.", "Check it out", "Hold on a natural, readable product shot."),
+                segment(0, 2, "hook", f"Here's what this {product} looks like in use.", "See it in use", hook_visual),
+                segment(2, 5, "context", context_voice if hazardous else "Here's the detail I wanted to verify.", "Check the detail", context_visual),
+                segment(5, 10, "proof", f"Notice: {first_fact}", "Close-up proof", proof_visual),
+                segment(10, 13, "payoff", second_fact, "One more visible detail", payoff_visual),
+                segment(13, 15, "cta", "Tap the cart if you want to check it out.", "Check it out", cta_visual),
             ],
         ),
     ]
 
     variants: list[dict[str, Any]] = []
     for variant_id, angle, timeline in raw_variants:
-        score, breakdown = score_variant(timeline, used_ids, angle)
+        variant_fact_ids = [first["id"]] if variant_id == "variant-a" else used_ids
+        score, breakdown = score_variant(timeline, variant_fact_ids, angle)
         variants.append(
             {
                 "id": variant_id,
@@ -258,7 +299,7 @@ def build_script_package(project: dict[str, Any], ledger: dict[str, Any]) -> dic
                 "score": score,
                 "score_breakdown": breakdown,
                 "word_count": word_count(timeline),
-                "fact_ids_used": used_ids,
+                "fact_ids_used": variant_fact_ids,
                 "timeline": timeline,
             }
         )
@@ -312,6 +353,13 @@ def build_generation_prompt(project: dict[str, Any], storyboard: dict[str, Any])
             f"Action: {shot['action']} Voiceover: \"{shot['voiceover']}\" "
             f"Caption: \"{shot['caption']}\" in the safe center area."
         )
+    hazardous_constraints = ""
+    if is_hazardous_tool(project):
+        hazardous_constraints = (
+            " No tool near the creator's face, no bare hands during operation, no unsecured workpiece, "
+            "no free hand near the cutting path, no missing eye protection, and no children or pets nearby."
+        )
+
     return f"""Vertical 9:16, {storyboard['duration_seconds']} seconds, authentic handheld American TikTok UGC. Use ordinary phone-camera exposure, mild natural hand movement, and a real lived-in environment. Avoid a polished studio-commercial look.
 
 Person and setting:
@@ -328,7 +376,7 @@ Captions:
 Simple white TikTok-style subtitles synchronized to speech, one idea per caption, inside safe margins.
 
 Negative constraints:
-No studio lighting, glossy commercial aesthetic, robotic movement, malformed hands, floating product, duplicated parts, logo distortion, text errors, unsafe use, fake sparks, impossible results, extra accessories, unverified claims, fake urgency, or cinematic perfume-ad slow motion."""
+No studio lighting, glossy commercial aesthetic, robotic movement, malformed hands, floating product, duplicated parts, logo distortion, text errors, unsafe use, fake sparks, impossible results, extra accessories, unverified claims, fake urgency, or cinematic perfume-ad slow motion.{hazardous_constraints}"""
 
 
 def build_render_job(project: dict[str, Any], provider: str) -> dict[str, Any]:
@@ -366,7 +414,19 @@ def build_qa_report(
     usable_ids = set(ledger["usable_fact_ids"])
     timeline_ok, timeline_details = check_timeline(storyboard)
     spoken = " ".join(item["voiceover"] for item in variant["timeline"])
+    generated_copy = " ".join(
+        [spoken, *[item["caption"] for item in variant["timeline"]], *[shot["action"] for shot in storyboard["shots"]]]
+    )
     count = variant["word_count"]
+    hazardous = is_hazardous_tool(project)
+    hazardous_text = f"{generated_copy} {prompt}".lower()
+    hazardous_safety_ok = not hazardous or all(
+        requirement in hazardous_text
+        for requirement in ("eye protection", "work gloves", "workpiece", "free hand", "tool near")
+    )
+    category_relevant = not hazardous or not any(
+        phrase in generated_copy.lower() for phrase in LEGACY_CATEGORY_PHRASES
+    )
     checks = [
         {
             "id": "supported-claims",
@@ -403,6 +463,21 @@ def build_qa_report(
             "id": "prompt-guards",
             "status": "PASS" if "Product identity lock" in prompt and "Negative constraints" in prompt else "FAIL",
             "details": "The generation prompt includes identity and negative constraints.",
+        },
+        {
+            "id": "category-relevance",
+            "status": "PASS" if category_relevant else "FAIL",
+            "details": "Generated copy contains no leaked phrases from an unrelated legacy product category.",
+        },
+        {
+            "id": "hazardous-tool-safety",
+            "status": "PASS" if hazardous_safety_ok else "FAIL",
+            "details": (
+                "Hazardous-tool direction includes eye protection, work gloves, a secured workpiece, "
+                "a clear cutting path, and a no-tool-near-face guard."
+                if hazardous
+                else "The product name does not trigger the hazardous-tool safety profile."
+            ),
         },
     ]
     manual = [

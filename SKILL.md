@@ -14,6 +14,7 @@ Build a believable phone-shot recommendation that demonstrates verified product 
 3. Identify one audience, one concrete problem, one primary benefit, and one proof shot.
 4. Generate three 15-second concepts: discovery, problem-first, and demonstration-first.
 5. Show the product immediately, demonstrate it by second five, and use the timeline in `references/workflow-contract.md`.
+   For hazardous tools, show the powered-off product on a stable surface, require appropriate PPE and a secured workpiece, keep the free hand outside the cutting path, and never stage the tool near a face, child, or pet.
 6. Analyze hooks, natural US speech, compliance, and conversion using the specialized files in `prompts/`.
 7. Select the strongest safe variant and create synchronized voiceover, captions, and a timestamped storyboard.
 8. Build a provider-neutral generation prompt. Read `references/provider-contract.md` before producing a render job.
@@ -47,6 +48,7 @@ The runner writes, in order:
 - Exclude unsupported price, discount, capacity, material, certification, compatibility, warranty, scarcity, review, health, or result claims.
 - Keep captions in the safe center area and use one idea per caption.
 - Require a low-pressure CTA without fake urgency.
+- Reject category-leaked copy and require hazardous-tool prompts to include explicit PPE, workpiece, cutting-path, and powered-off handling direction.
 - Treat product identity, hand integrity, text accuracy, physical plausibility, and audio synchronization as manual checks after rendering.
 - Require human approval before spending provider credits or publishing a video.
 

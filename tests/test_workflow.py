@@ -65,6 +65,24 @@ class WorkflowTests(unittest.TestCase):
             parsed = json.loads(path.read_text(encoding="utf-8"))
             self.assertEqual(parsed["$schema"], "https://json-schema.org/draft/2020-12/schema")
 
+    def test_hazardous_tool_copy_is_category_relevant_and_safety_guarded(self):
+        project = json.loads((ROOT / "examples" / "hazardous_tool_input.json").read_text(encoding="utf-8"))
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory)
+            state = run_pipeline(project, output)
+            self.assertEqual(state["current_state"], "QA_COMPLETE")
+            generated = "\n".join(path.read_text(encoding="utf-8") for path in output.iterdir()).lower()
+            for phrase in ("small essentials", "big tote", "errand bag", "phone and keys", "for errands"):
+                self.assertNotIn(phrase, generated)
+            for safety_term in ("eye protection", "work gloves", "workpiece", "no tool near", "no free hand"):
+                self.assertIn(safety_term, generated)
+            self.assertNotIn("hold the product beside the face", generated)
+
+            report = json.loads((output / "qa_report.json").read_text(encoding="utf-8"))
+            checks = {item["id"]: item["status"] for item in report["automatic_checks"]}
+            self.assertEqual(checks["category-relevance"], "PASS")
+            self.assertEqual(checks["hazardous-tool-safety"], "PASS")
+
 
 if __name__ == "__main__":
     unittest.main()

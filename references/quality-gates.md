@@ -9,6 +9,8 @@
 - Captions are short and marked for safe-center placement.
 - The CTA has no fake urgency.
 - The prompt contains identity locks and negative constraints.
+- Generated copy is relevant to the supplied product rather than a leftover template category.
+- Hazardous tools include appropriate PPE, a secured workpiece, a clear cutting path, powered-off handling, and no tool near a face, child, or pet.
 
 ## Manual after rendering
 

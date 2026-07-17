@@ -1,0 +1,50 @@
+{
+  "project_id": "cordless-chain-saw-demo",
+  "market": "US",
+  "platform": "TikTok Shop",
+  "duration_seconds": 15,
+  "provider": "prompt-only",
+  "product": {
+    "name": "JUMLEE cordless mini chain saw",
+    "identity": [
+      "JUMLEE brand spelling and red-black logo",
+      "compact teal and black handheld chain saw body with red controls",
+      "guide bar visibly marked 6 inches",
+      "black upper chain guard",
+      "battery pack visibly labeled 36V"
+    ],
+    "facts": [
+      {
+        "id": "six-inch-marking",
+        "text": "The guide bar is visibly marked 6 inches.",
+        "source": "visible",
+        "evidence": "The product image clearly shows a 6-inch marking on the guide bar."
+      },
+      {
+        "id": "upper-chain-guard",
+        "text": "A black upper chain guard is visible above the guide bar.",
+        "source": "visible",
+        "evidence": "The product image clearly shows the guard."
+      },
+      {
+        "id": "runtime-claim",
+        "text": "The battery provides long runtime.",
+        "source": "unverified"
+      }
+    ]
+  },
+  "creative": {
+    "audience": "US homeowners and DIYers looking for a compact tool for light pruning tasks",
+    "problem": "a full-size saw can feel excessive for one small pruning job",
+    "primary_benefit": "a compact format for controlled light-pruning tasks",
+    "proof_shot": "Show eye protection, work gloves, a stable stance, and a small dry branch secured to a workbench; make one slow controlled cut while keeping the free hand far from the chain path and never bypassing the guard.",
+    "setting": "an ordinary backyard workbench in natural daylight with no children or pets nearby"
+  },
+  "assets": [
+    {
+      "id": "product-reference-01",
+      "type": "image",
+      "description": "Front product and packaging reference image"
+    }
+  ]
+}
